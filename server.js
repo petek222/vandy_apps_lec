@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const process = require('./process');
+
 const app = express()
 
 const apiKey = '*****************';
@@ -15,35 +17,28 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
 
-  console.log('REQ:');
-  console.log(req);
-
-  let APIKEY = "b6ba85ee";
-
-  let city = req.body.movie;
-  console.log('CITY' + city);
+  let className = req.body.class;
   //let APIKEY = "229f3914e379c1c648e55b896cac5b6b";
   //let url = `http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID=${APIKEY}`
 
   // Make sure to replace "Star Wars" with the correct parameter
   //let url = `http://www.omdbapi.com/?apikey=${APIKEY}&t=Star+Wars`
 
-  let url = `http://www.omdbapi.com/?apikey=${APIKEY}&t=${city}`
+  let result = process.professorData(className);
 
 
+  // request(url, function (err, response, body) {
 
-  request(url, function (err, response, body) {
+  //   console.log(response);
+  //   if(err){
+  //     res.render('index', {weather: null, error: 'Error, please try again'});
+  //   } else {
+  //     let movieData = JSON.parse(body)
+  //     let resultingData = dataParser(movieData);
 
-    console.log(response);
-    if(err){
-      res.render('index', {weather: null, error: 'Error, please try again'});
-    } else {
-      let movieData = JSON.parse(body)
-      let resultingData = dataParser(movieData);
-
-      res.send(resultingData);
-    }
-  });
+  //     res.send(resultingData);
+  //   }
+  // });
 })
 
 app.listen(3000, function () {
@@ -66,4 +61,5 @@ function dataParser(movieData) {
     //   <li>{"Plot: " + movieData["Plot"]}</li>
     // </ul>
 }
+
 
