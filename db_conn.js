@@ -10,13 +10,24 @@ var con = mysql.createConnection({
     password: "Sinc40245"
   });
   
-con.connect(function(err) {
+module.exports = con.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
-    let sql = "SELECT * FROM sys.profdata";
+    let sql = "SELECT * FROM sys.profdata"; // Query works! Write whatever we want in this processing section
+
     con.query(sql, function (err, result) {
         if (err) throw err;
-        console.log(result);
+        return result;
       });
   });
 
+
+// Maybe try to use express her for talking between services rather than doing it raw
+
+
+
+
+
+// This grabs department of specific professor
+// console.log(result[0]['prof_dept']);
+// let sql = "SELECT * FROM sys.profdata where prof_name = 1101"; // Query works! Write whatever we want in this processing section
