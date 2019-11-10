@@ -9,18 +9,30 @@ var con = mysql.createConnection({
     user: "root",
     password: "Sinc40245"
   });
+
+con.connect((err) => {
+    if(err){
+      console.log('Error connecting to Db');
+      return;
+    }
+    console.log('Connection established');
+});
+
+
   
-module.exports = con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    let sql = "SELECT * FROM sys.profdata"; // Query works! Write whatever we want in this processing section
+  
+// var query = con.connect(function(err) {
+//     if (err) throw err;
+//     console.log("Connected!");
+//     let sql = "SELECT * FROM sys.profdata"; // Query works! Write whatever we want in this processing section
 
-    con.query(sql, function (err, result) {
-        if (err) throw err;
-        return result;
-      });
-  });
+//     con.query(sql, function (err, result) {
+//         if (err) throw err;
+//         return result;
+//       });
+//   });
 
+  module.exports.con = con;
 
 // Maybe try to use express her for talking between services rather than doing it raw
 

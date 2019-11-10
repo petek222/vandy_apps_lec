@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const process = require('./process');
-const db = require('./db_conn');
+const con = require('./db_conn');
 var router = express.Router();
+var mysql = require('mysql');
 
 const app = express()
 
@@ -17,21 +18,42 @@ app.get('/', function (req, res) {
   res.render('index', {weather: null, error: null});
 })
 
-app.post('/', function (req, res) {
+
+// This is finally working with the databse as desired
+app.post('/', async function (req, res) {
 
   let className = req.body.class; // This grabs whatever was put in the search box
+  let databaseInformation;
 
   console.log("LOOK!")
   console.log(className);
 
-  let databaseInformation = db();
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Sinc40245"
+  });
 
-  console.log("YAA");
-  console.log(databaseInformation);
+  con.connect((err) => {
+    if(err){
+      console.log('Error connecting to Db');
+      return;
+    }
+    console.log('Connection established');
+  });
 
-  let result = process.professorData(className);
+  // Inside thia query function we can do the bulk of our data processing
+  await con.query('SELECT * FROM sys.profdata', (err,rows) => {
+    if(err) throw err;
+    databaseInformation = rows; 
+  
+    console.log('Data received from Db:\n');
+    console.log(rows);
+
+    // Fill in with row manipulation, call to sorting algorithm/RMP-API, etc. 
 
 
+  });
 })
 
 async function processQuery(query) {
