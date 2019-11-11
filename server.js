@@ -1,11 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const process = require('./process');
 const con = require('./db_conn');
 var router = express.Router();
 var mysql = require('mysql');
-var rmp = require('rmp-api'); 
+var processData = require('./process');
 
 const app = express()
 
@@ -56,54 +55,14 @@ app.post('/', async function (req, res) {
       professorArray.push(databaseInformation[i]['prof_name']);
     }
 
-    var vandy = rmp("Pennsylvania State University");
+    // Call to algorithmic helper function in process.js
+    let result = await processData.processQueryArray(professorArray);
 
-    let x = await vandy.get("Naseem Ibrahim", callback);
-    console.log('YUH');
-    console.log(x);
-
-    res.send(databaseInformation);
-
-    // Now that we have the array of professor information generated, we can 
-    // use the RateMyProfessor API to make calls for each professor in the list
-
-
-
-
+    res.send(result);
   });
 })
 
-var callback = function(professor) {
-  console.log("Professor: " + professor);
-  if (professor === null) {
-    console.log("No professor found.");
-    return;
-  }
-  console.log("Name: " + professor.fname + " " + professor.lname);
-  console.log("University: "+ professor.university);
-  console.log("Quality: " + professor.quality);
-  console.log("Easiness: " + professor.easiness);
-  console.log("Helpfulness: " + professor.help);
-  console.log("Average Grade: " + professor.grade);
-  console.log("Chili: " + professor.chili);
-  console.log("URL: " + professor.url);
-  console.log("First comment: " + professor.comments[0]);
-};
-
-async function processQuery(query) {
-  return query(query);
-}
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
-
-
-function dataParser(movieData) {
-    // Fill this in to parse the data we grab and process into a neat way
-    // Maybe do a list that ranks the best to worst options for the given class
-    //
-    // Tab each professor so you can click on them for more statistical information
-}
-
-
