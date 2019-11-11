@@ -5,6 +5,7 @@ const process = require('./process');
 const con = require('./db_conn');
 var router = express.Router();
 var mysql = require('mysql');
+var rmp = require('rmp-api'); 
 
 const app = express()
 
@@ -43,18 +44,51 @@ app.post('/', async function (req, res) {
   });
 
   // Inside thia query function we can do the bulk of our data processing
-  await con.query('SELECT * FROM sys.profdata', (err,rows) => {
+  await con.query(`SELECT * FROM sys.profdata where course_number = ${className} `, async (err,rows) => {
     if(err) throw err;
     databaseInformation = rows; 
   
     console.log('Data received from Db:\n');
     console.log(rows);
 
-    // Fill in with row manipulation, call to sorting algorithm/RMP-API, etc. 
+    let professorArray = new Array();
+    for (let i = 0; i < databaseInformation.length; i++) {
+      professorArray.push(databaseInformation[i]['prof_name']);
+    }
+
+    var vandy = rmp("Pennsylvania State University");
+
+    let x = await vandy.get("Naseem Ibrahim", callback);
+    console.log('YUH');
+    console.log(x);
+
+    res.send(databaseInformation);
+
+    // Now that we have the array of professor information generated, we can 
+    // use the RateMyProfessor API to make calls for each professor in the list
+
+
 
 
   });
 })
+
+var callback = function(professor) {
+  console.log("Professor: " + professor);
+  if (professor === null) {
+    console.log("No professor found.");
+    return;
+  }
+  console.log("Name: " + professor.fname + " " + professor.lname);
+  console.log("University: "+ professor.university);
+  console.log("Quality: " + professor.quality);
+  console.log("Easiness: " + professor.easiness);
+  console.log("Helpfulness: " + professor.help);
+  console.log("Average Grade: " + professor.grade);
+  console.log("Chili: " + professor.chili);
+  console.log("URL: " + professor.url);
+  console.log("First comment: " + professor.comments[0]);
+};
 
 async function processQuery(query) {
   return query(query);
